@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'employee_model.dart';
+
+import 'package:employees_in_departments/core/models/employee_model.dart';
+// ignore: library_prefixes
+import 'package:employees_in_departments/core/constants/constants.dart' as Constants;
 
 Future<http.Response> createEmployee(
     String empNo,
@@ -12,13 +15,12 @@ Future<http.Response> createEmployee(
     String dateOfJoin,
     String dateOfBirth,
     double basicSalary,
-    bool isActive
-    ) {
+    bool isActive) {
   return http.post(
-    Uri.parse('http://examination.24x7retail.com/api/v1.0/Employee'),
+    Uri.parse(Constants.EMPLOYEE_URL),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
-      'apiToken': 'voluptate'
+      'apiToken': Constants.API_KEY,
     },
     body: jsonEncode(<String, dynamic>{
       'empNo': empNo,
@@ -45,13 +47,12 @@ Future<http.Response> updateEmployee(
     String dateOfJoin,
     String dateOfBirth,
     double basicSalary,
-    bool isActive
-    ) {
+    bool isActive) {
   return http.put(
-    Uri.parse('http://examination.24x7retail.com/api/v1.0/Employee'),
+    Uri.parse(Constants.EMPLOYEE_URL),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
-      'apiToken': 'voluptate'
+      'apiToken': Constants.API_KEY,
     },
     body: jsonEncode(<String, dynamic>{
       'empNo': empNo,
@@ -70,9 +71,9 @@ Future<http.Response> updateEmployee(
 
 Future<Employee> getEmployee(String id) async {
   final response = await http.get(
-    Uri.parse('http://examination.24x7retail.com/api/v1.0/Employee/$id'),
+    Uri.parse(Constants.EMPLOYEE_URL + "/$id"),
     headers: <String, String>{
-      'apiToken': 'voluptate',
+      'apiToken': Constants.API_KEY,
     },
   );
 
@@ -85,18 +86,20 @@ Future<Employee> getEmployee(String id) async {
 
 Future<List<Employee>> fetchEmployees() async {
   final response = await http.get(
-    Uri.parse('http://examination.24x7retail.com/api/v1.0/Employees'),
+    Uri.parse(Constants.ALL_EMPLOYEES_URL),
     headers: <String, String>{
-      'apiToken': '?D(G+KbPeSgVkYp3s6v9y\$B&E)H@McQf',
+      'apiToken': Constants.API_KEY,
     },
   );
 
   if (response.statusCode == 200) {
     List<Map<String, dynamic>> listOfEmployeesRaw = jsonDecode(response.body);
     List<Employee> listOfEmployees = [];
-    for (Map<String, dynamic> mapData in listOfEmployeesRaw){
+
+    for (Map<String, dynamic> mapData in listOfEmployeesRaw) {
       listOfEmployees.add(Employee.fromJson(mapData));
     }
+
     return listOfEmployees;
   } else {
     throw Exception('Failed to load album');
@@ -105,9 +108,9 @@ Future<List<Employee>> fetchEmployees() async {
 
 Future<Employee> deleteEmployee(String id) async {
   final http.Response response = await http.delete(
-    Uri.parse('http://examination.24x7retail.com/api/v1.0/Employee/$id'),
+    Uri.parse(Constants.EMPLOYEE_URL + "/$id"),
     headers: <String, String>{
-      'apiToken': '?D(G+KbPeSgVkYp3s6v9y\$B&E)H@McQf',
+      'apiToken': Constants.API_KEY,
     },
   );
 
